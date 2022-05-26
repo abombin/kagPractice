@@ -9,6 +9,8 @@ pLE=preprocessing.LabelEncoder()
 df=pd.read_csv('../input/titanic/train.csv')
 test=pd.read_csv("../input/titanic/test.csv")
 
+df['Name_Title'] = df['Name'].apply(lambda x: x.split(',')[1]).apply(lambda x: x.split()[0]) # make column with titles
+
 cols=['Pclass', 'Age', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked']
 def procesTrain(df):
     data=df[cols]
@@ -18,6 +20,9 @@ def procesTrain(df):
         else:
             data[i].fillna('U', inplace=True)
     return data
+
+dfFiltr=procesTrain(df)
+print(dfFiltr.isnull().sum())
 
 dfFiltr=procesTrain(df)
 print(dfFiltr.isnull().sum()) # make sure that no NAs left
@@ -55,6 +60,11 @@ survMod=RandomForestClassifier(criterion='gini',
 survMod.fit(dfFiltr, survived)
 
 print("%.4f" % survMod.oob_score_) # print percentage
+
+# see what variables are important
+pd.concat((pd.DataFrame(dfFiltr.columns, columns = ['variable']), 
+           pd.DataFrame(survMod.feature_importances_, columns = ['importance'])), 
+          axis = 1).sort_values(by='importance', ascending = False)[:20]
 
 # predict and save
 val_predict=survMod.predict(dfFiltrTest)
