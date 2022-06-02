@@ -53,3 +53,13 @@ for i in xVar:
     model=ols(f'Age~C({i})', data=dfProc).fit()
     anova_table = sm.stats.anova_lm(model, typ=1)
     print(anova_table)
+
+    
+# check for correct group means in the next cell
+res = dfProc.groupby(['Pclass','FamGr','Name_Title'])['Age'].mean().reset_index()
+#res.head(50)
+
+meanPerGr = dfProc.groupby(['Pclass','FamGr','Name_Title'])['Age'].transform('mean')
+dfProc['Age']=dfProc['Age'].fillna(meanPerGr)
+#dfProc.head(20)
+
