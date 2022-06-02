@@ -63,3 +63,4 @@ meanPerGr = dfProc.groupby(['Pclass','FamGr','Name_Title'])['Age'].transform('me
 dfProc['Age']=dfProc['Age'].fillna(meanPerGr)
 #dfProc.head(20)
 
+
